@@ -8,7 +8,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "helloemsg.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "appsup.settings")
 
 from django.core.handlers.wsgi import WSGIHandler
 application = WSGIHandler()
