@@ -37,6 +37,8 @@ def service(request):
 		(token,service,method,params) = (dbody.get('token'),dbody.get('service'),dbody.get('method'),dbody.get('params'))
 		if 'user' == service: 
 			s = UserService()
+		elif 'event' == service: 
+			s = EventService()
 		else:
 			raise RuntimeError('service not found')
 		m = getattr(s,method)
@@ -69,7 +71,47 @@ class Parent:
 		logger.info('response=%s' % res) 
 		return res
 
-
+class EventService(Parent):
+	'''
+	事件模块，处理app相应事件
+		{"service":"event", ... }
+	'''
+	def a01(self,params,tk):
+		'''
+		用户对商品感兴趣时，app发送此事件；
+			?body={"service":"event","method":"a01", "params":{...} }
+		
+		输入：感兴趣的服务或商品id
+			{
+				"service":"event",
+				"method":"a01",
+				"params":{
+					"username":"产生事件的登录名",
+					"product_id":"服务/商品 id"	
+				}
+			}	
+								
+		输出：服务／商品 发起人的留言信息，区分在线和不在线两种情况；
+			正常：
+			{
+				"success":true,
+				"entity":{
+					"message":"服务发起人的到店欢迎信息；如果为空，则表示没有欢迎信息",
+					"online":true/false //true 发起人在线，false 发起人不在线
+				}
+			}	
+			异常：
+			{
+				"success":false,
+				"entity":{"reason":"xxxx"}
+			}		
+		'''
+		#TODO 伪实现，假设服务发起人在线先
+		message = "每天13～15点预约此服务，可享受7折优惠，具体优惠细节可以详谈。"
+		online = True
+		return self.success(True,{'message':message,'online':online})
+	
+	
 class UserService(Parent) :
 	'''
 	用户模块
