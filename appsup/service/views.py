@@ -40,6 +40,7 @@ def service(request):
 		else:
 			raise RuntimeError('service not found')
 		m = getattr(s,method)
+		params = json.loads(params)
 		success = m(params,token)
 	except Exception,e:
 		logger.error( "exception ===> %s" % e )
