@@ -1,5 +1,5 @@
 EPYDOC=epydoc  
-DSTDOC=../templates/appsup  
+DSTDOC=../statics/appsup  
 
 doc: clean-doc  
 	$(EPYDOC) --html --graph=all -v -o $(DSTDOC) views.py  
