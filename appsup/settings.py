@@ -1,4 +1,5 @@
 # Django settings for appsup project.
+import os.path as op
 
 mongo_port = '27017'
 mongo_host = '192.168.2.13'
@@ -65,7 +66,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = '/app/statics'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -111,10 +112,12 @@ ROOT_URLCONF = 'appsup.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'appsup.wsgi.application'
 
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    op.join(op.dirname(__file__),'templates'),
 )
 
 INSTALLED_APPS = (
