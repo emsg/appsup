@@ -101,7 +101,7 @@ class UserService(Parent) :
 		user_coll = self.db.user
 		ct = self.timestamp()
 		if user_coll.find_one({'username':username}):
-			return {'success':False,'entity':'already_exists'}
+			return self.success(False,entity='already_exists')
 		else:
 			params['ct'] = ct 
 			user_coll.insert(params)
