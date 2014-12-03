@@ -50,7 +50,7 @@ def service(request):
 class Parent:
 	def __init__(self):
 		f = (host,port,repl) = (settings.mongo_host,settings.mongo_port,settings.mongo_replicaset)
-		logger.debug("mongodb_info::> %s" % f)
+		logger.debug( "mongodb_info::> %s ; %s ; %s" % f )
 		conn = pymongo.MongoClient(host=host,port=port,replicaset=repl)
 		self.conn = conn
 		self.db = conn.appsup
