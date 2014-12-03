@@ -23,8 +23,10 @@ logger = logging.getLogger(__name__)
 {"success":true/false,"entity":{}}
 
 '''
-#入口函数
 def service(request):
+	'''
+	rest 入口函数
+	'''
 	try:
 		if request.method == 'GET' :
 			body = request.GET.get('body')
@@ -51,7 +53,7 @@ class Parent:
 	def __init__(self):
 		f = (host,port,repl) = (settings.mongo_host,settings.mongo_port,settings.mongo_replicaset)
 		logger.debug( "mongodb_info::> %s ; %s ; %s" % f )
-		conn = pymongo.MongoClient(host=host,port=port,replicaset=repl)
+		conn = pymongo.MongoClient(host=host,port=int(port),replicaset=repl)
 		self.conn = conn
 		self.db = conn.appsup
 
@@ -129,10 +131,9 @@ class UserService(Parent) :
 		'''
 		username = params['username']
 		pwd = params['pwd']
-		db = self.appsup
-		user_coll = db.user
+		user_coll = self.db.user
 		if user_coll.find_one({'username':username,'pwd':pwd}):
-			token_coll = db.token
+			token_coll = self.db.token
 			token = uuid.uuid4().hex
 			token_coll.insert({'username':username,'token':token,'ct':self.timestamp()})
 			return self.success(True,{'token':token})
@@ -152,9 +153,8 @@ class UserService(Parent) :
 		输出：
 			{"success":true}		
 		'''
-		db = self.appsup
 		token = params['token']
-		token_coll = db.token
+		token_coll = self.db.token
 		token_coll.remove({'token':token})
 		return self.success(True)
 	
@@ -175,18 +175,34 @@ class UserService(Parent) :
 			}		
 
 		'''
-		db = self.appsup
 		token = tk 
-		token_coll = db.token
+		token_coll = self.db.token
 		if token_coll.find_one({'token':token}):
 			return self.success(True)
 		else:
 			return self.success(False,'fail_token')
 
-	# 更新用户数据
 	def update(self,params,tk):
-		db = self.appsup
-		token_coll = db.token
+		'''
+		更新用户数据时，token 是必填项，后台根据token得到用户的原始数据，其中用户的登录名不允许修改;
+		更新成功后，返回更新后的用户信息
+			?body={"token":"xxx","service":"user","method":"update"}
+		输入：
+			{
+				"token":"xxx",
+				"service":"user", 
+				"method":"update",
+				"params":{
+					...
+				}
+			}	
+		输出：
+			{
+				"success":true/false,
+				"engity":{"username":"xxx",...}/{"reason":"fail_token"}
+			}	
+		'''
+		token_coll = self.db.token
 		token = token_coll.find_one({'token':tk})
 		logger.debug("user.update token=%s" % token)
 		if token :
@@ -200,11 +216,24 @@ class UserService(Parent) :
 		else:
 			return self.success(False,'fail_token')
 	
-	# 获取用户数据
 	def find(self,params,tk):
-		db = self.appsup
-		user_coll = db.user
-		token_coll = db.token
+		'''
+		获取用户数据,根据 token 获取对应用户的全部信息
+			?body={"token":"xxx","service":"user","method":"find"}
+		输入：
+			{
+				"token":"xxx",
+				"service":"user", 
+				"method":"find"
+			}	
+		输出：
+			{
+				"success":true/false,
+				"engity":{"username":"xxx",...}/{"reason":"fail_token"}
+			}	
+		'''
+		user_coll = self.db.user
+		token_coll = self.db.token
 		if(params):
 			obj = user_coll.find_one(params,{'_id':0}) 
 		else:
@@ -216,12 +245,25 @@ class UserService(Parent) :
 				return self.success(False,'not_found')	
 		return self.success(True,obj)	
 	
-	# 获取好友列表
 	def friends(self,params,tk):
-		db = self.appsup
-		friends_coll = db.friends
-		token_coll = db.token
-		user_coll = db.user
+		'''
+		获取好友列表,token 为必填项，获取 token 对应用户的好友列表
+			?body={"token":"xxx","service":"user","method":"friends"}
+		输入：
+			{
+				"token":"xxx",
+				"service":"user", 
+				"method":"friends"
+			}	
+		输出：
+			{
+				"success":true/false,
+				"engity":{"username":"xxx",...}/{"reason":"fail_token"}
+			}
+		'''
+		friends_coll = self.db.friends
+		token_coll = self.db.token
+		user_coll = self.db.user
 		token = token_coll.find_one({'token':tk})
 		FromUser = token['username']	
 		ul = friends_coll.find({'from_user':FromUser},{'_id':0,'to_user':1})
@@ -234,11 +276,26 @@ class UserService(Parent) :
 		logger.debug('friends -> %s' % data)
 		return self.success(True,data)	
 
-	# 添加好友
 	def makefriends(self,params,tk):
-		db = self.appsup
-		friends_coll = db.friends
-		token_coll = db.token
+		'''
+		添加好友,token 为必填项，获取 token 对应用户的好友列表
+			?body={"token":"xxx","service":"user","method":"makefriends"}
+		输入：
+			{
+				"token":"xxx",
+				"service":"user", 
+				"method":"makefriends",
+				"params":{
+					"username":"我要加为好友的 username"
+				}
+			}	
+		输出：
+			{
+				"success":true"
+			}
+		'''
+		friends_coll = self.db.friends
+		token_coll = self.db.token
 		token = token_coll.find_one({'token':tk})
 		FromUser = token['username']	
 		ToUser = params['username']
