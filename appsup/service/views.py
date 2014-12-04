@@ -30,21 +30,15 @@ def service(request):
 	rest 入口函数
 	
 	入口异常信息描述：
-	<table>
-		<tr>
-			<td>{'success':False,'entity':{'reason':'service_not_found'}}</td>
-			<td>未知的服务</td>
-		</tr>
-		<tr>
-			<td>{'success':False,'entity':{'reason':'appid_not_register'}}</td>
-			<td>未注册的appid</td>
-		</tr>
-		<tr>
-			<td>{'success':False,'entity':{'reason':'exception'}}</td>
-			<td>未知异常，需要联系开发人员</td>
-		</tr>
+	
+		未知的服务
+			{'success':False,'entity':{'reason':'service_not_found'}}
 		
-	</table>
+		未注册的appid
+			{'success':False,'entity':{'reason':'appid_not_register'}}
+		
+		未知异常，需要联系开发人员
+			{'success':False,'entity':{'reason':'exception'}}
 	'''
 	try:
 		if request.method == 'GET' :
