@@ -1,9 +1,23 @@
-# Django settings for appsup project.
+#/usr/bin/env python
+#coding=utf-8
+
 import os.path as op
 
 mongo_port = '27017'
 mongo_host = '192.168.2.13'
 mongo_replicaset = 'part1'
+
+emsg_rest = 'http://192.168.2.11:4280/'
+# 应用的独有配置，每个应用应当单独来注册
+
+app_cfg = {
+    # 家政服务app
+    '141204' : {
+        'domain' : 'test.com',
+        'license' : '123456'        
+    },
+}
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
