@@ -28,6 +28,23 @@ logger = logging.getLogger(__name__)
 def service(request):
 	'''
 	rest 入口函数
+	
+	入口异常信息描述：
+	<table>
+		<tr>
+			<td>{'success':False,'entity':{'reason':'service_not_found'}}</td>
+			<td>未知的服务</td>
+		</tr>
+		<tr>
+			<td>{'success':False,'entity':{'reason':'appid_not_register'}}</td>
+			<td>未注册的appid</td>
+		</tr>
+		<tr>
+			<td>{'success':False,'entity':{'reason':'exception'}}</td>
+			<td>未知异常，需要联系开发人员</td>
+		</tr>
+		
+	</table>
 	'''
 	try:
 		if request.method == 'GET' :
@@ -43,19 +60,19 @@ def service(request):
 			elif 'event' == service: 
 				s = EventService()
 			else:
-				success = {'success':False,'entity':'service_not_found'}
+				success = {'success':False,'entity':{'reason':'service_not_found'}}
 
 			m = getattr(s,method)
 			params = json.loads(params)
 			success = m(params,token,appid)
 		else :
-			success = {'success':False,'entity':'appid_not_register'}
+			success = {'success':False,'entity':{'reason':'appid_not_register'}}
 		success.update({'appid':appid})
 	except Exception,e:
 		logger.error( "exception ===> %s" % e )
 		err = traceback.format_exc()
 		logger.error( "exception ===> %s" % err )
-		success = {'success':False,'entity':'exception'}
+		success = {'success':False,'entity':{'reason':'exception'}}
 		
 	return answer(success)
 
