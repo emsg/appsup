@@ -115,6 +115,7 @@ class EventService(Parent):
 			}		
 		'''
 		online = False
+		# TODO 测试信息，稍后要清除
 		message = "每天13～15点预约此服务，可享受7折优惠，具体优惠细节可以详谈。"
 		product_coll = self.db.product
 		obj = product_coll.find_one({'product_id':params.get('product_id')},{'cb':1,'welcome':1,'_id':0})
